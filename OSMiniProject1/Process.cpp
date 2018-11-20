@@ -1,6 +1,6 @@
 #include "Process.h"
 
-Process::Process(int arrival, int brust, int priority )
+Process::Process(float arrival, float brust, int priority )
 {
 	setArrivalTime(arrival);
 	setBrustTime(brust);

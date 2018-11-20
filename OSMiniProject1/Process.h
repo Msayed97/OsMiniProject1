@@ -6,7 +6,7 @@ class Process
 	float turnaroundTime;
 	int priority;
 public:
-	Process(int arrival , int brust , int priority);
+	Process(float arrival , float brust , int priority);
 	float getArrivalTime();
 	float getBrustTime();
 	int getPriority();
