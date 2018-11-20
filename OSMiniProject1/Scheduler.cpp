@@ -27,10 +27,10 @@ void Scheduler::FCFS()
 	
 		for (int i = start; i < activeProcesses.size(); i++)
 		{
-			float brust = activeProcesses[i].getBrustTime();
-			activeProcesses[i].setFinishingTime(brust + time);
+			float burst = activeProcesses[i].getburstTime();
+			activeProcesses[i].setFinishingTime(burst + time);
 			start++;
-			busy(brust);
+			busy(burst);
 			time++; // assume context time = 1
 			numOfProcesses--;
 		}
@@ -41,7 +41,7 @@ void Scheduler::FCFS()
 	cout << endl << "processes algo done" << endl;
 	for (int i = 0; i < activeProcesses.size(); i++)
 	{
-		cout << activeProcesses[i].getArrivalTime() << "\t" <<activeProcesses[i].getBrustTime()<<"\t" << activeProcesses[i].getFinishingTime() << endl;
+		cout << activeProcesses[i].getArrivalTime() << "\t" <<activeProcesses[i].getburstTime()<<"\t" << activeProcesses[i].getFinishingTime() << endl;
 	}
 }
 
@@ -92,10 +92,11 @@ void Scheduler::addToScheduler(string s)
 		for (int i = 0; i < numOfProcesses; i++)
 		{
 			float arrivalTime;
-			float	brustTime;
+			float	burstTime;
 			int priority;
-			data >> arrivalTime >> arrivalTime >> brustTime >> priority;
-			processes.push_back(Process(arrivalTime, brustTime, priority));
+			int id;
+			data >> id >> arrivalTime >> burstTime >> priority;
+			processes.push_back(Process(id , arrivalTime, burstTime, priority));
 		}
 	}
 
