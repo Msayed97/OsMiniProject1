@@ -27,6 +27,19 @@ float Process::getTurnaroundTime()
 	return turnaroundTime;
 }
 
+float Process::getFinishingTime()
+{
+	return finishingTime;
+}
+
+void Process::setFinishingTime(float t)
+{
+	if (t > 0)
+	{
+		finishingTime = t;
+	}
+}
+
 void Process::setTurnaroundTime(float t)
 {
 	if (t > 0)

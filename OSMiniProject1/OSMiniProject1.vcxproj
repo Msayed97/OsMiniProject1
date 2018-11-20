@@ -111,12 +111,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="ProcessGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Memory.h" />
+    <ClInclude Include="Scheduler.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="ProcessGenerator.h" />
   </ItemGroup>
