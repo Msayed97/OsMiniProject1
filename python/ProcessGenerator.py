@@ -35,9 +35,4 @@ class ProcessGenerator():
                 file.write('\n' + str(i+1) + " " + str(ArrivalTimes[i]) + " " + str(BustTimes[i]) + " " + str(Prioritys[i]))
 
 
-pg = ProcessGenerator("input.txt")
-pg.ReadInput()
-pg.GenerateOutput()
-
-
 
