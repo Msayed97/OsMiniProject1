@@ -68,9 +68,9 @@ class Scheduler():
             self.Time+=1;
             self.RefreshProcesses()
             
-    def HPF(self):
-        counter = len(self.Processes)
-        while counter:
+   # def HPF(self):
+    #    counter = len(self.Processes)
+     #   while counter:
             
             
 
