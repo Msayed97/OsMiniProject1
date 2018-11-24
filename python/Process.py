@@ -7,12 +7,12 @@ This is a temporary script file.
 class Process():
     
     def __init__(self, d, arrival, burst, priority):
-       self.__Id =self.SetID(d)
-       self.__ArrivalTime=self.SetArrival(arrival)
-       self.__BurstTime=self.SetBurstTime(burst)
-       self.__RemainingTime=self.SetRemainingTime(burst)
-       self.__Priority=self.SetPriority(priority)
-       self.__FinishTime=self.SetFinishTime(0)
+      self.SetID(d)
+      self.SetArrival(arrival)
+      self.SetBurstTime(burst)
+      self.SetRemainingTime(burst)
+      self.SetPriority(priority)
+      self.SetFinishTime(0)
 
 ##############Get functions###########################################################
     def GetID(self):
@@ -39,6 +39,7 @@ class Process():
     
     def GetFinishTime(self):
         return self.__FinishTime
+    
     #################################def of Set functions#####################################
     def SetID(self , value):
         if(value >=0):

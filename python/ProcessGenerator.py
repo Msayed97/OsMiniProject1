@@ -26,8 +26,8 @@ class ProcessGenerator():
             self.priorityLambda = float(content[3])
 
     def GenerateOutput(self, outputName="processes.txt"):
-        ArrivalTimes = np.random.normal(self.ArrivalTMean, self.ArrivalTVariance, self.NumOfProcesses).astype(int)
-        BustTimes = np.random.normal(self.BurstTMean, self.BurstTVariance, self.NumOfProcesses).astype(int)
+        ArrivalTimes = np.abs(np.random.normal(self.ArrivalTMean, self.ArrivalTVariance, self.NumOfProcesses).astype(int))
+        BustTimes = np.abs(np.random.normal(self.BurstTMean, self.BurstTVariance, self.NumOfProcesses).astype(int))
         Prioritys = np.random.poisson(self.priorityLambda, self.NumOfProcesses)
         with open(outputName , 'w+') as file:
             file.write(str(self.NumOfProcesses))
