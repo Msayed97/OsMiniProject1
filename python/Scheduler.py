@@ -51,7 +51,7 @@ class Scheduler():
              x=3 ### function of RR
              print('RR is choosen')
          elif(x=="SRTN"):
-            x=4  ### function of SRTN
+            self.SRTN()
             print('SRTNs is choosen')
             
 ###############################################
@@ -91,6 +91,8 @@ class Scheduler():
     
     def SortPriority(self):
        self.ActiveProcesses.sort( key = lambda x: (x.GetPriority() , -x.GetID() ) , reverse=True)
+    def SortRemainingTime(self):
+       self.ActiveProcesses.sort( key = lambda x: (x.GetRemainingTime() , -x.GetID() ) , reverse=True)
        
     def RefreshProcesses(self):
         for pro in self.Processes:
@@ -112,18 +114,55 @@ class Scheduler():
                 brust = self.ActiveProcesses[0].GetBurstTime();
                 self.ActiveProcesses[0].SetFinishTime(brust + self.Time)
                 self.Busy(brust)
-                
+                 
                 self.ActiveProcesses[0].SetArrival(self.Time-brust)
                 self.PrintProcesses.append(self.ActiveProcesses[0])
                 self.ActiveProcesses.pop(0)
                 self.NumOfProcess -= 1
-                self.Busy(self.context)
+                
                 self.SortPriority()
+                self.Busy(self.context)
+              
             self.Time+=1
         self.Draw()       
                 
-            
-            
+            # kharaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa############################
+    def SRTN(self):
+       
+        while self.NumOfProcess:
+            self.RefreshProcesses()
+            self.SortRemainingTime()
+            while len(self.ActiveProcesses):
+                if(self.ActiveProcesses[0].GetRemainingTime() <= self.quantum):
+                    remainingTime = self.ActiveProcesses[0].GetRemainingTime()
+                    self.ActiveProcesses[0].SetFinishTime(remainingTime + self.Time)
+                    self.Busy(remainingTime)
+                
+                    self.ActiveProcesses[0].SetArrival(self.Time-remainingTime)
+                    self.PrintProcesses.append(self.ActiveProcesses[0])
+                    self.ActiveProcesses.pop(0)
+                    self.NumOfProcess -= 1
+                    self.SortRemainingTime()
+                    self.Busy(self.context)
+                   #### should handle when there gone happen 2 or more context switching in row
+                   
+                else:
+                    id = self.ActiveProcesses[0].GetID()
+                    remainingTime = self.ActiveProcesses[0].GetRemainingTime()
+                    self.ActiveProcesses[0].SetRemainingTime(remainingTime - self.quantum)
+                    self.ActiveProcesses[0].SetFinishTime(self.quantum + self.Time)
+                    self.Busy(self.quantum)
+                    self.ActiveProcesses[0].SetArrival(self.Time-self.quantum)
+                    self.PrintProcesses.append(self.ActiveProcesses[0])
+                    self.SortRemainingTime()
+                    if(id != self.ActiveProcesses[0].GetID()):
+                         self.Busy(self.context)
+                         
+                        
+            self.Time+=1
+        self.Draw()       
+
+        
             
 
     
