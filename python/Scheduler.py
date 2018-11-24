@@ -59,10 +59,12 @@ class Scheduler():
             self.Time+=1;
             self.RefreshProcesses()
             
-    
-        
-    
-       
+    def HPF(self):
+        counter = len(self.Processes)
+        while counter:
+            
+            
+          
 g = Scheduler()     
 g.AddToScheduler("processes.txt")
 g.SortTime()
