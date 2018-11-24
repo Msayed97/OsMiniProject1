@@ -42,7 +42,7 @@ class Scheduler():
          x = switcher.get(argument, "Invalid algo")
          
          if(x=="HPF"):
-             x=1 ### function of HPF
+             self.HPF()
              print('HPF is choosen')
          elif(x=="FCFS"):
             self.FCFS()  ### function of FCFS
@@ -90,7 +90,7 @@ class Scheduler():
          self.Processes.sort( key = lambda x: (x.GetArrival() , x.GetID()))
     
     def SortPriority(self):
-       self.Processes.sort( key = lambda x: (x.GetPriority() , -x.GetID() ) , reverse=True)
+       self.ActiveProcesses.sort( key = lambda x: (x.GetPriority() , -x.GetID() ) , reverse=True)
        
     def RefreshProcesses(self):
         for pro in self.Processes:
@@ -103,9 +103,26 @@ class Scheduler():
             self.Time+=1;
             self.RefreshProcesses()
             
-   # def HPF(self):
-    #    counter = len(self.Processes)
-     #   while counter:
+    def HPF(self):
+       
+        while self.NumOfProcess:
+            self.RefreshProcesses()
+            self.SortPriority()
+            while len(self.ActiveProcesses):
+                brust = self.ActiveProcesses[0].GetBurstTime();
+                self.ActiveProcesses[0].SetFinishTime(brust + self.Time)
+                self.Busy(brust)
+                
+                self.ActiveProcesses[0].SetArrival(self.Time-brust)
+                self.PrintProcesses.append(self.ActiveProcesses[0])
+                self.ActiveProcesses.pop(0)
+                self.NumOfProcess -= 1
+                self.Busy(self.context)
+                self.SortPriority()
+            self.Time+=1
+        self.Draw()       
+                
+            
             
             
 
