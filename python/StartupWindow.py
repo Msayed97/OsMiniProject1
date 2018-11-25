@@ -51,9 +51,10 @@ class ScheduleWindow(Frame):
         schedule.pack(padx = 25 , pady = 10, expand = True )
     
     def startScheduling(self):
-        self.controller.sch.AddToScheduler(self.controller.outputText)
-        self.controller.sch.SortTime()
-        self.controller.sch.start(self.algoNumber.get(),self.contextEntery.get(),self.quantEntery.get())
+        sch = Scheduler()
+        sch.AddToScheduler(self.controller.outputText)
+        sch.SortTime()
+        sch.start(self.algoNumber.get(),self.contextEntery.get(),self.quantEntery.get())
 
 ####################################################################################################################################
 
@@ -89,9 +90,8 @@ class GenerateWindow(Frame):
 #################################################################################################################################################
 
 class Application(Tk):
-    def __init__(self,scheduler):
+    def __init__(self):
         Tk.__init__(self)
-        self.sch = scheduler
         self.inputText = "input.txt"
         self.outputText = "output.txt"
         self.minsize(300,300)
