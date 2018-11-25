@@ -48,6 +48,7 @@ class Scheduler():
             self.FCFS()  ### function of FCFS
             print('FCFS is choosen')
          elif(x=="RR"):
+             self.RR()
              x=3 ### function of RR
              print('RR is choosen')
          elif(x=="SRTN"):
@@ -75,8 +76,33 @@ class Scheduler():
             print(x.GetFinishTime())
         self.Draw()
 
+    def RR(self):
+         while self.NumOfProcess:
+             self.RefreshProcesses()
+             for i,p in enumerate(self.ActiveProcesses):
+                remaining = self.ActiveProcesses[i].GetRemainingTime();
+                if(remaining >= self.quantum):
+                    remaining = self.quantum
+                    self.ActiveProcesses[i].SetRemainingTime(self.ActiveProcesses[i].GetRemainingTime()-remaining);
+                    self.ActiveProcesses.append(self.ActiveProcesses[i])
+                else:
+                    self.ActiveProcesses[i].SetFinishTime(remaining + self.Time)
+                    self.NumOfProcess -= 1
 
+                self.Busy(remaining)
 
+                # for easy the DRAW 
+                self.ActiveProcesses[i].SetArrival(self.Time-remaining)
+                self.ActiveProcesses[i].SetBurstTime(remaining)
+                self.PrintProcesses.append(self.ActiveProcesses[i])
+                #####################
+                
+                self.ActiveProcesses.pop(i)
+                if(i+1 < len(self.ActiveProcesses)):
+                    if(self.ActiveProcesses[i].GetID() != self.ActiveProcesses[i+1].GetID() ):
+                        self.Busy(self.context)
+             self.Time+=1
+         self.Draw()
     def AddToScheduler(self , InputFile):
          with open(InputFile) as file:
             self.NumOfProcess = int(file.readline())
