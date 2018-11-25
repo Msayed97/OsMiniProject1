@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1f40e4b5-9c14-4cb9-afe7-9881d08f5540}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>StartupWindow.py</StartupFile>
+    <StartupFile>osProject.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -24,8 +24,12 @@
     <Content Include="processes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="osProject.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Process.py" />
     <Compile Include="ProcessGenerator.py" />
+    <Compile Include="Scheduler.py" />
     <Compile Include="StartupWindow.py">
       <SubType>Code</SubType>
     </Compile>

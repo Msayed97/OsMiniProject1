@@ -40,7 +40,7 @@ class Process():
     def GetFinishTime(self):
         return self.__FinishTime
     
-    #################################def of Set functions#####################################
+    ################################# def of Set functions #####################################
     def SetID(self , value):
         if(value >=0):
             self.__Id = value
@@ -66,10 +66,3 @@ class Process():
         if(value >=0):
             self.__FinishTime = value
             
-            
-
-    
-    
-    
-
-g = Process(1,2,3,4)
