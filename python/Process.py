@@ -31,11 +31,13 @@ class Process():
         return self.__Priority
     
     def GetTurnAroundTime(self):
-         self.__FinishTime - self.__ArrivalTime
+        return self.__FinishTime - self.__ArrivalTime
     
     def GetWeightedTat(self):
-        return self.TurnAroundTime / self.__BurstTime
+        return (self.GetTurnAroundTime() / self.__BurstTime)
     
+    def GetWaitingTime(self):
+        return (self.GetTurnAroundTime() - self.GetBurstTime())
     
     def GetFinishTime(self):
         return self.__FinishTime

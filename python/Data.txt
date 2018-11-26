@@ -1,0 +1,8 @@
+number of processes4
+Id wT TAT weightedTAT
+1 0 4 1.0
+2 4 10 1.6666666666666667
+3 10 14 3.5
+4 12 13 13.0
+Average TAT:  10.25 
+Average weighted TAT:  4.791666666666667 

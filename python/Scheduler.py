@@ -15,10 +15,11 @@ class Scheduler():
         self.Processes = list()
         self.ActiveProcesses = list()
         self.PrintProcesses = list()
+        self.PrintInfo = list()
         self.Done = False
         self.Time = 0
         self.context = 0
-        self.quantum = 0
+        self.quantum = 4
         
     def Draw(self):
         style.use('ggplot')
@@ -27,7 +28,23 @@ class Scheduler():
             plt.bar(i.GetArrival(), i.GetID(), width=i.GetBurstTime(), align='edge')
 
         plt.show()
+#####################################################################################################################################
+    def printData(self):
+        with open("Data.txt" , 'w+') as file:
+            file.write( "number of processes" + str(len(self.PrintInfo)))
+            file.write('\n' + "Id " + "wT " + "TAT " + "weightedTAT" )
+            AVGTAT = 0
+            AVGWTAT= 0
+            for i in range(len(self.PrintInfo)):
+                file.write('\n' +str(self.PrintInfo[i].GetID()) + " " + str(self.PrintInfo[i].GetWaitingTime()) + " " + str(self.PrintInfo[i].GetTurnAroundTime()) + " " +  str(self.PrintInfo[i].GetWeightedTat()))
+                AVGTAT+=self.PrintInfo[i].GetTurnAroundTime()
+                AVGWTAT+=self.PrintInfo[i].GetWeightedTat()
+            AVGTAT /=len(self.PrintInfo)
+            AVGWTAT /=len(self.PrintInfo)
+            file.write('\n' +"Average TAT: " + " " + str(AVGTAT) + " " )
+            file.write('\n' +"Average weighted TAT: " + " " + str(AVGWTAT) + " " )    
 
+##############################################################################################
     def start(self , argument , cont , quant):
          if cont != "":
             self.context  = int(cont) 
@@ -55,55 +72,53 @@ class Scheduler():
             self.SRTN()
             print('SRTNs is choosen')
             
-###############################################
+##############################################################################################
     def FCFS(self):
         while self.NumOfProcess:
             self.RefreshProcesses()
-            for i,p in enumerate(self.ActiveProcesses):
-                if i >= len(self.ActiveProcesses):
-                    print(i,len(self.ActiveProcesses))
-                brust = self.ActiveProcesses[i].GetBurstTime();
-                self.ActiveProcesses[i].SetFinishTime(brust + self.Time)
+            while len(self.ActiveProcesses):
+                brust = self.ActiveProcesses[0].GetBurstTime();
+                self.ActiveProcesses[0].SetFinishTime(brust + self.Time)
+                self.PrintInfo.append(self.ActiveProcesses[0])
                 self.Busy(brust)
                 # for easy the DRAW 
-                self.ActiveProcesses[i].SetArrival(self.Time-brust)
+                self.PrintProcesses.append(Process(self.ActiveProcesses[0].GetID(),self.Time-brust,brust,self.Time))
                 #####################
-                self.PrintProcesses.append(self.ActiveProcesses[i])
-                self.ActiveProcesses.pop(i)
+                self.ActiveProcesses.pop(0)
                 self.NumOfProcess -= 1
                 self.Busy(self.context)
             self.Time+=1
-        for x in self.PrintProcesses:
-            print(x.GetFinishTime())
+        self.printData()
         self.Draw()
 
     def RR(self):
          while self.NumOfProcess:
              self.RefreshProcesses()
-             for i,p in enumerate(self.ActiveProcesses):
-                remaining = self.ActiveProcesses[i].GetRemainingTime();
+             while len(self.ActiveProcesses):
+                remaining = self.ActiveProcesses[0].GetRemainingTime();
                 if(remaining >= self.quantum):
-                    remaining = self.quantum
-                    self.ActiveProcesses[i].SetRemainingTime(self.ActiveProcesses[i].GetRemainingTime()-remaining);
-                    self.ActiveProcesses.append(self.ActiveProcesses[i])
-                else:
-                    self.ActiveProcesses[i].SetFinishTime(remaining + self.Time)
-                    self.NumOfProcess -= 1
-
-                self.Busy(remaining)
-
-                # for easy the DRAW 
-                self.ActiveProcesses[i].SetArrival(self.Time-remaining)
-                self.ActiveProcesses[i].SetBurstTime(remaining)
-                self.PrintProcesses.append(self.ActiveProcesses[i])
-                #####################
-                
-                self.ActiveProcesses.pop(i)
-                if(i+1 < len(self.ActiveProcesses)):
-                    if(self.ActiveProcesses[i].GetID() != self.ActiveProcesses[i+1].GetID() ):
+                    id = self.ActiveProcesses[0].GetID()
+                    self.ActiveProcesses[0].SetRemainingTime(self.ActiveProcesses[0].GetRemainingTime()-self.quantum)
+                    self.Busy(self.quantum)
+                    self.ActiveProcesses.append(self.ActiveProcesses[0])
+                    self.ActiveProcesses.pop(0)
+                    self.PrintProcesses.append(Process(id,self.Time-self.quantum,self.quantum,1))
+                    if id != self.ActiveProcesses[0].GetID():
                         self.Busy(self.context)
+                else:
+                    self.ActiveProcesses[0].SetFinishTime(remaining + self.Time)
+                    self.Busy(remaining)
+                    self.PrintInfo.append(self.ActiveProcesses[0])
+                
+
+                    self.PrintProcesses.append(Process(self.ActiveProcesses[0].GetID(),self.Time-remaining,remaining,self.Time))
+                    self.NumOfProcess -= 1
+                    self.ActiveProcesses.pop(0)
+                    self.Busy(self.context)
              self.Time+=1
+         self.printData()
          self.Draw()
+##############################################################################################################################
     def AddToScheduler(self , InputFile):
          with open(InputFile) as file:
             self.NumOfProcess = int(file.readline())
@@ -118,7 +133,7 @@ class Scheduler():
     def SortPriority(self):
        self.ActiveProcesses.sort( key = lambda x: (x.GetPriority() , -x.GetID() ) , reverse=True)
     def SortRemainingTime(self):
-       self.ActiveProcesses.sort( key = lambda x: (x.GetRemainingTime() , -x.GetID() ) , reverse=True)
+       self.ActiveProcesses.sort( key = lambda x: (x.GetRemainingTime() , x.GetID() ) )
        
     def RefreshProcesses(self):
         for pro in self.Processes:
@@ -128,7 +143,7 @@ class Scheduler():
                 break
     def Busy(self , clock):
         for i in range(clock):
-            self.Time+=1;
+            self.Time+=1
             self.RefreshProcesses()
             
     def HPF(self):
@@ -139,10 +154,9 @@ class Scheduler():
             while len(self.ActiveProcesses):
                 brust = self.ActiveProcesses[0].GetBurstTime();
                 self.ActiveProcesses[0].SetFinishTime(brust + self.Time)
+                self.PrintInfo.append(self.ActiveProcesses[0])
                 self.Busy(brust)
-                 
-                self.ActiveProcesses[0].SetArrival(self.Time-brust)
-                self.PrintProcesses.append(self.ActiveProcesses[0])
+                self.PrintProcesses.append(Process(self.ActiveProcesses[0].GetID(),self.Time-brust,brust,self.Time))
                 self.ActiveProcesses.pop(0)
                 self.NumOfProcess -= 1
                 
@@ -150,7 +164,8 @@ class Scheduler():
                 self.Busy(self.context)
               
             self.Time+=1
-        self.Draw()       
+        self.printData()
+        self.Draw()    
                 
             # kharaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa############################
     def SRTN(self):
@@ -159,34 +174,31 @@ class Scheduler():
             self.RefreshProcesses()
             self.SortRemainingTime()
             while len(self.ActiveProcesses):
-                if(self.ActiveProcesses[0].GetRemainingTime() <= self.quantum):
-                    remainingTime = self.ActiveProcesses[0].GetRemainingTime()
-                    self.ActiveProcesses[0].SetFinishTime(remainingTime + self.Time)
-                    self.Busy(remainingTime)
-                
-                    self.ActiveProcesses[0].SetArrival(self.Time-remainingTime)
-                    self.PrintProcesses.append(self.ActiveProcesses[0])
-                    self.ActiveProcesses.pop(0)
+                id = self.ActiveProcesses[0].GetID()
+                p = self.ActiveProcesses[0]
+                end = True
+                counter =0 
+                while self.ActiveProcesses[0].GetRemainingTime():
+                    self.Time+=1
+                    counter+=1
+                    p.SetRemainingTime(p.GetRemainingTime() - 1)
+                    self.RefreshProcesses()
+                    self.SortRemainingTime()
+                    if id!=self.ActiveProcesses[0].GetID():
+                       self.PrintProcesses.append(Process(p.GetID(),self.Time-counter,counter,self.Time)) 
+                       self.Busy(self.context)
+                       end= False
+                       break
+                if(end):
+                    self.ActiveProcesses[0].SetFinishTime(self.Time)
+                    self.PrintInfo.append(self.ActiveProcesses[0])
+                    self.PrintProcesses.append(Process(self.ActiveProcesses[0].GetID(),self.Time-counter,counter,self.Time))
                     self.NumOfProcess -= 1
-                    self.SortRemainingTime()
+                    self.ActiveProcesses.pop(0)
                     self.Busy(self.context)
-                   #### should handle when there gone happen 2 or more context switching in row
-                   
-                else:
-                    id = self.ActiveProcesses[0].GetID()
-                    remainingTime = self.ActiveProcesses[0].GetRemainingTime()
-                    self.ActiveProcesses[0].SetRemainingTime(remainingTime - self.quantum)
-                    self.ActiveProcesses[0].SetFinishTime(self.quantum + self.Time)
-                    self.Busy(self.quantum)
-                    self.ActiveProcesses[0].SetArrival(self.Time-self.quantum)
-                    self.PrintProcesses.append(self.ActiveProcesses[0])
-                    self.SortRemainingTime()
-                    if(id != self.ActiveProcesses[0].GetID()):
-                         self.Busy(self.context)
-                         
-                        
             self.Time+=1
-        self.Draw()       
+        self.printData()
+        self.Draw()  
 
         
             

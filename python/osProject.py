@@ -1,6 +1,6 @@
 from StartupWindow import *
 
 input = "input.txt"
-output = "out"
+output = "output.txt"
 App = Application()
 App.mainloop()
